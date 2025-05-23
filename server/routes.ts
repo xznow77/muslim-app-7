@@ -1,116 +1,191 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertResourceSchema, insertGalleryItemSchema } from "@shared/schema";
+import { insertAdhkarSchema, insertTasbihSessionSchema, insertUserSettingsSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Resources endpoints
-  app.get("/api/resources", async (req, res) => {
+  // Adhkar endpoints
+  app.get("/api/adhkar", async (req, res) => {
     try {
-      const { category, skillLevel, search, featured } = req.query;
+      const { category, search } = req.query;
       
-      let resources;
-      
+      let adhkar;
       if (search) {
-        resources = await storage.searchResources(search as string);
-      } else if (featured === "true") {
-        resources = await storage.getFeaturedResources();
+        adhkar = await storage.searchAdhkar(search as string);
       } else if (category) {
-        resources = await storage.getResourcesByCategory(category as string);
-      } else if (skillLevel) {
-        resources = await storage.getResourcesBySkillLevel(skillLevel as string);
+        adhkar = await storage.getAdhkarByCategory(category as string);
       } else {
-        resources = await storage.getResources();
+        adhkar = await storage.getAdhkar();
       }
       
-      res.json(resources);
+      res.json(adhkar);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch resources" });
+      res.status(500).json({ message: "Failed to fetch adhkar" });
     }
   });
 
-  app.get("/api/resources/:id", async (req, res) => {
+  app.get("/api/adhkar/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const resource = await storage.getResource(id);
+      const adhkar = await storage.getAdhkar(id);
       
-      if (!resource) {
-        return res.status(404).json({ message: "Resource not found" });
+      if (!adhkar) {
+        return res.status(404).json({ message: "Adhkar not found" });
       }
       
-      res.json(resource);
+      res.json(adhkar);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch resource" });
+      res.status(500).json({ message: "Failed to fetch adhkar" });
     }
   });
 
-  app.post("/api/resources", async (req, res) => {
+  // Asma ul Husna endpoints
+  app.get("/api/asma-ul-husna", async (req, res) => {
     try {
-      const validatedData = insertResourceSchema.parse(req.body);
-      const resource = await storage.createResource(validatedData);
-      res.status(201).json(resource);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid resource data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Failed to create resource" });
-    }
-  });
-
-  // Gallery endpoints
-  app.get("/api/gallery", async (req, res) => {
-    try {
-      const { category } = req.query;
+      const { search } = req.query;
       
-      let items;
-      if (category) {
-        items = await storage.getGalleryItemsByCategory(category as string);
+      let asmaUlHusna;
+      if (search) {
+        asmaUlHusna = await storage.searchAsmaUlHusna(search as string);
       } else {
-        items = await storage.getGalleryItems();
+        asmaUlHusna = await storage.getAsmaUlHusna();
       }
       
-      res.json(items);
+      res.json(asmaUlHusna);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch gallery items" });
+      res.status(500).json({ message: "Failed to fetch Asma ul Husna" });
     }
   });
 
-  app.post("/api/gallery", async (req, res) => {
+  app.get("/api/asma-ul-husna/:order", async (req, res) => {
     try {
-      const validatedData = insertGalleryItemSchema.parse(req.body);
-      const item = await storage.createGalleryItem(validatedData);
-      res.status(201).json(item);
+      const order = parseInt(req.params.order);
+      const asma = await storage.getAsmaUlHusnaByOrder(order);
+      
+      if (!asma) {
+        return res.status(404).json({ message: "Name not found" });
+      }
+      
+      res.json(asma);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch Asma" });
+    }
+  });
+
+  // Prayer Times endpoints
+  app.get("/api/prayer-times", async (req, res) => {
+    try {
+      const { city, date } = req.query;
+      
+      if (!city || !date) {
+        return res.status(400).json({ message: "City and date are required" });
+      }
+      
+      const prayerTimes = await storage.getPrayerTimes(city as string, date as string);
+      
+      if (!prayerTimes) {
+        return res.status(404).json({ message: "Prayer times not found" });
+      }
+      
+      res.json(prayerTimes);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch prayer times" });
+    }
+  });
+
+  // Islamic Events endpoints
+  app.get("/api/islamic-events", async (req, res) => {
+    try {
+      const { date, category } = req.query;
+      
+      let events;
+      if (date) {
+        events = await storage.getIslamicEventsByDate(date as string);
+      } else if (category) {
+        events = await storage.getIslamicEventsByCategory(category as string);
+      } else {
+        events = await storage.getIslamicEvents();
+      }
+      
+      res.json(events);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch Islamic events" });
+    }
+  });
+
+  // Tasbih endpoints
+  app.get("/api/tasbih/:userId", async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const sessions = await storage.getTasbihSessions(userId);
+      res.json(sessions);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch tasbih sessions" });
+    }
+  });
+
+  app.post("/api/tasbih", async (req, res) => {
+    try {
+      const validatedData = insertTasbihSessionSchema.parse(req.body);
+      const session = await storage.createTasbihSession(validatedData);
+      res.status(201).json(session);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid gallery item data", errors: error.errors });
+        return res.status(400).json({ message: "Invalid tasbih data", errors: error.errors });
       }
-      res.status(500).json({ message: "Failed to create gallery item" });
+      res.status(500).json({ message: "Failed to create tasbih session" });
     }
   });
 
-  // Skill levels endpoints
-  app.get("/api/skill-levels", async (req, res) => {
+  app.put("/api/tasbih/:id", async (req, res) => {
     try {
-      const skillLevels = await storage.getSkillLevelPaths();
-      res.json(skillLevels);
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      const session = await storage.updateTasbihSession(id, updates);
+      res.json(session);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch skill levels" });
+      res.status(500).json({ message: "Failed to update tasbih session" });
     }
   });
 
-  app.get("/api/skill-levels/:level", async (req, res) => {
+  // User Settings endpoints
+  app.get("/api/settings/:userId", async (req, res) => {
     try {
-      const level = req.params.level;
-      const skillLevel = await storage.getSkillLevelPath(level);
+      const userId = req.params.userId;
+      const settings = await storage.getUserSettings(userId);
       
-      if (!skillLevel) {
-        return res.status(404).json({ message: "Skill level not found" });
+      if (!settings) {
+        return res.status(404).json({ message: "User settings not found" });
       }
       
-      res.json(skillLevel);
+      res.json(settings);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch skill level" });
+      res.status(500).json({ message: "Failed to fetch user settings" });
+    }
+  });
+
+  app.post("/api/settings", async (req, res) => {
+    try {
+      const validatedData = insertUserSettingsSchema.parse(req.body);
+      const settings = await storage.createUserSettings(validatedData);
+      res.status(201).json(settings);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid settings data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create user settings" });
+    }
+  });
+
+  app.put("/api/settings/:userId", async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const updates = req.body;
+      const settings = await storage.updateUserSettings(userId, updates);
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update user settings" });
     }
   });
 

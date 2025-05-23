@@ -3,29 +3,30 @@
 @tailwind utilities;
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 20 14.3% 4.1%;
-  --muted: 60 4.8% 95.9%;
-  --muted-foreground: 25 5.3% 44.7%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 20 14.3% 4.1%;
-  --card: 0 0% 100%;
-  --card-foreground: 20 14.3% 4.1%;
-  --border: 20 5.9% 90%;
-  --input: 20 5.9% 90%;
-  --primary: 25 30% 30%; /* #8B4513 - Saddle Brown */
-  --primary-foreground: 60 9% 98%;
-  --secondary: 26 60% 50%; /* #D2691E - Chocolate */
-  --secondary-foreground: 60 9% 98%;
-  --accent: 14 90% 60%; /* #FF6B35 - Red Orange */
-  --accent-foreground: 60 9% 98%;
+  --background: 45 25% 97%; /* #FAF8F3 - Light Cream */
+  --foreground: 210 15% 15%; /* #1E2A2E - Dark Blue Grey */
+  --muted: 45 20% 92%; /* #F0EDE6 - Light Beige */
+  --muted-foreground: 210 10% 45%; /* #6B7785 - Medium Grey */
+  --popover: 45 25% 98%; /* #FBFAF7 - Very Light Cream */
+  --popover-foreground: 210 15% 15%;
+  --card: 45 30% 99%; /* #FCFBF8 - Almost White Cream */
+  --card-foreground: 210 15% 15%;
+  --border: 45 15% 85%; /* #DDDAD0 - Light Grey Beige */
+  --input: 45 15% 88%; /* #E3E0D6 - Input Grey */
+  --primary: 155 60% 25%; /* #1A7A4A - Islamic Green */
+  --primary-foreground: 45 25% 98%;
+  --secondary: 45 35% 65%; /* #B8AF94 - Warm Beige */
+  --secondary-foreground: 210 15% 15%;
+  --accent: 35 85% 50%; /* #E6A532 - Golden Yellow */
+  --accent-foreground: 210 15% 15%;
   --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 60 9.1% 97.8%;
-  --ring: 20 14.3% 4.1%;
-  --radius: 0.5rem;
-  --success: 120 60% 30%; /* #228B22 - Forest Green */
-  --neutral: 60 30% 93%; /* #F5F5DC - Beige */
-  --charcoal: 0 0% 20%; /* #333333 */
+  --destructive-foreground: 45 25% 98%;
+  --ring: 155 60% 25%;
+  --radius: 0.75rem;
+  --success: 155 60% 35%; /* #22A55B - Success Green */
+  --islamic-gold: 45 90% 55%; /* #F4D03F - Islamic Gold */
+  --islamic-blue: 210 60% 35%; /* #2E5984 - Islamic Blue */
+  --prayer-time: 155 45% 20%; /* #1B5E37 - Dark Prayer Green */
 }
 
 .dark {

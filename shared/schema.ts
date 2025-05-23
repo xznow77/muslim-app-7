@@ -1,59 +1,132 @@
-import { pgTable, text, serial, integer, boolean, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, jsonb, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const resources = pgTable("resources", {
+// Adhkar (Islamic Remembrance) Table
+export const adhkar = pgTable("adhkar", {
   id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  category: text("category").notNull(), // painting, drawing, digital, sculpture, etc.
-  skillLevel: text("skill_level").notNull(), // beginner, intermediate, advanced
-  duration: text("duration").notNull(), // "2.5 hours"
-  rating: text("rating").notNull(), // "4.8"
-  imageUrl: text("image_url").notNull(),
+  arabicText: text("arabic_text").notNull(),
+  transliteration: text("transliteration"),
+  translation: text("translation").notNull(),
+  category: text("category").notNull(), // morning, evening, after_prayer, before_sleep, travel, food, etc.
+  source: text("source").notNull(), // Quran or Hadith reference
+  repetitions: integer("repetitions").default(1),
+  benefits: text("benefits"),
   tags: text("tags").array().notNull().default([]),
-  featured: boolean("featured").notNull().default(false),
-  popular: boolean("popular").notNull().default(false),
-  metadata: jsonb("metadata"), // Additional SEO and content metadata
 });
 
-export const galleryItems = pgTable("gallery_items", {
+// Beautiful Names of Allah (Asma ul Husna)
+export const asmaUlHusna = pgTable("asma_ul_husna", {
   id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  artist: text("artist").notNull(),
-  skillLevel: text("skill_level").notNull(),
-  category: text("category").notNull(),
-  imageUrl: text("image_url").notNull(),
-  description: text("description"),
+  arabicName: text("arabic_name").notNull(),
+  transliteration: text("transliteration").notNull(),
+  meaning: text("meaning").notNull(),
+  explanation: text("explanation").notNull(),
+  order: integer("order").notNull(), // 1-99
+  benefits: text("benefits"),
+  quranicReferences: text("quranic_references").array().default([]),
 });
 
-export const skillLevelPaths = pgTable("skill_level_paths", {
+// Quran Verses
+export const quranVerses = pgTable("quran_verses", {
   id: serial("id").primaryKey(),
-  level: text("level").notNull(), // beginner, intermediate, advanced
+  surahNumber: integer("surah_number").notNull(),
+  surahName: text("surah_name").notNull(),
+  surahNameArabic: text("surah_name_arabic").notNull(),
+  verseNumber: integer("verse_number").notNull(),
+  arabicText: text("arabic_text").notNull(),
+  translation: text("translation").notNull(),
+  transliteration: text("transliteration"),
+  revelationType: text("revelation_type"), // meccan or medinan
+  juz: integer("juz"),
+  page: integer("page"),
+});
+
+// Prayer Times
+export const prayerTimes = pgTable("prayer_times", {
+  id: serial("id").primaryKey(),
+  city: text("city").notNull(),
+  country: text("country").notNull(),
+  latitude: text("latitude"),
+  longitude: text("longitude"),
+  fajr: text("fajr").notNull(),
+  sunrise: text("sunrise").notNull(),
+  dhuhr: text("dhuhr").notNull(),
+  asr: text("asr").notNull(),
+  maghrib: text("maghrib").notNull(),
+  isha: text("isha").notNull(),
+  date: text("date").notNull(),
+  hijriDate: text("hijri_date"),
+});
+
+// Islamic Calendar Events
+export const islamicEvents = pgTable("islamic_events", {
+  id: serial("id").primaryKey(),
   title: text("title").notNull(),
+  titleArabic: text("title_arabic"),
   description: text("description").notNull(),
-  features: text("features").array().notNull(),
-  color: text("color").notNull(), // CSS color class
-  icon: text("icon").notNull(), // Font Awesome icon class
+  hijriDate: text("hijri_date").notNull(),
+  gregorianDate: text("gregorian_date"),
+  category: text("category").notNull(), // religious, historical, cultural
+  significance: text("significance"),
+  isRecurring: boolean("is_recurring").default(false),
 });
 
-export const insertResourceSchema = createInsertSchema(resources).omit({
-  id: true,
+// User Preferences and Settings
+export const userSettings = pgTable("user_settings", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  prayerNotifications: boolean("prayer_notifications").default(true),
+  adhkarReminders: boolean("adhkar_reminders").default(true),
+  preferredQari: text("preferred_qari").default("mishary"),
+  darkMode: boolean("dark_mode").default(false),
+  language: text("language").default("ar"), // ar, en, fr, tr, etc.
+  location: jsonb("location"), // {latitude, longitude, city, country}
+  prayerMethod: integer("prayer_method").default(2), // calculation method
+  favoriteAdhkar: text("favorite_adhkar").array().default([]),
+  tasbihCount: integer("tasbih_count").default(0),
+  dailyAdhkarGoal: integer("daily_adhkar_goal").default(100),
 });
 
-export const insertGalleryItemSchema = createInsertSchema(galleryItems).omit({
-  id: true,
+// Tasbih Counter
+export const tasbihSessions = pgTable("tasbih_sessions", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  dhikrText: text("dhikr_text").notNull(),
+  count: integer("count").notNull(),
+  targetCount: integer("target_count").default(33),
+  startTime: timestamp("start_time").defaultNow(),
+  endTime: timestamp("end_time"),
+  completed: boolean("completed").default(false),
 });
 
-export const insertSkillLevelPathSchema = createInsertSchema(skillLevelPaths).omit({
-  id: true,
-});
+// Create insert schemas
+export const insertAdhkarSchema = createInsertSchema(adhkar).omit({ id: true });
+export const insertAsmaUlHusnaSchema = createInsertSchema(asmaUlHusna).omit({ id: true });
+export const insertQuranVerseSchema = createInsertSchema(quranVerses).omit({ id: true });
+export const insertPrayerTimesSchema = createInsertSchema(prayerTimes).omit({ id: true });
+export const insertIslamicEventSchema = createInsertSchema(islamicEvents).omit({ id: true });
+export const insertUserSettingsSchema = createInsertSchema(userSettings).omit({ id: true });
+export const insertTasbihSessionSchema = createInsertSchema(tasbihSessions).omit({ id: true });
 
-export type InsertResource = z.infer<typeof insertResourceSchema>;
-export type Resource = typeof resources.$inferSelect;
+// Types
+export type Adhkar = typeof adhkar.$inferSelect;
+export type InsertAdhkar = z.infer<typeof insertAdhkarSchema>;
 
-export type InsertGalleryItem = z.infer<typeof insertGalleryItemSchema>;
-export type GalleryItem = typeof galleryItems.$inferSelect;
+export type AsmaUlHusna = typeof asmaUlHusna.$inferSelect;
+export type InsertAsmaUlHusna = z.infer<typeof insertAsmaUlHusnaSchema>;
 
-export type InsertSkillLevelPath = z.infer<typeof insertSkillLevelPathSchema>;
-export type SkillLevelPath = typeof skillLevelPaths.$inferSelect;
+export type QuranVerse = typeof quranVerses.$inferSelect;
+export type InsertQuranVerse = z.infer<typeof insertQuranVerseSchema>;
+
+export type PrayerTimes = typeof prayerTimes.$inferSelect;
+export type InsertPrayerTimes = z.infer<typeof insertPrayerTimesSchema>;
+
+export type IslamicEvent = typeof islamicEvents.$inferSelect;
+export type InsertIslamicEvent = z.infer<typeof insertIslamicEventSchema>;
+
+export type UserSettings = typeof userSettings.$inferSelect;
+export type InsertUserSettings = z.infer<typeof insertUserSettingsSchema>;
+
+export type TasbihSession = typeof tasbihSessions.$inferSelect;
+export type InsertTasbihSession = z.infer<typeof insertTasbihSessionSchema>;
