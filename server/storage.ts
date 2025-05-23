@@ -385,4 +385,128 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+import { db } from "./db";
+import { eq } from "drizzle-orm";
+
+export class DatabaseStorage implements IStorage {
+  async getAdhkar(): Promise<Adhkar[]> {
+    return await db.select().from(adhkar);
+  }
+
+  async getAdhkarByCategory(category: string): Promise<Adhkar[]> {
+    return await db.select().from(adhkar).where(eq(adhkar.category, category));
+  }
+
+  async searchAdhkar(query: string): Promise<Adhkar[]> {
+    return await db.select().from(adhkar).where(
+      eq(adhkar.arabicText, query) // يمكن تحسين البحث لاحقاً
+    );
+  }
+
+  async getAdhkar(id: number): Promise<Adhkar | undefined> {
+    const [result] = await db.select().from(adhkar).where(eq(adhkar.id, id));
+    return result || undefined;
+  }
+
+  async createAdhkar(insertAdhkar: InsertAdhkar): Promise<Adhkar> {
+    const [result] = await db.insert(adhkar).values(insertAdhkar).returning();
+    return result;
+  }
+
+  async getAsmaUlHusna(): Promise<AsmaUlHusna[]> {
+    return await db.select().from(asmaUlHusna);
+  }
+
+  async getAsmaUlHusnaByOrder(order: number): Promise<AsmaUlHusna | undefined> {
+    const [result] = await db.select().from(asmaUlHusna).where(eq(asmaUlHusna.order, order));
+    return result || undefined;
+  }
+
+  async searchAsmaUlHusna(query: string): Promise<AsmaUlHusna[]> {
+    return await db.select().from(asmaUlHusna).where(
+      eq(asmaUlHusna.arabicName, query) // يمكن تحسين البحث لاحقاً
+    );
+  }
+
+  async getQuranVerses(): Promise<QuranVerse[]> {
+    return await db.select().from(quranVerses);
+  }
+
+  async getQuranVersesBySurah(surahNumber: number): Promise<QuranVerse[]> {
+    return await db.select().from(quranVerses).where(eq(quranVerses.surahNumber, surahNumber));
+  }
+
+  async getQuranVerse(surahNumber: number, verseNumber: number): Promise<QuranVerse | undefined> {
+    const [result] = await db.select().from(quranVerses).where(
+      eq(quranVerses.surahNumber, surahNumber)
+    );
+    return result || undefined;
+  }
+
+  async searchQuranVerses(query: string): Promise<QuranVerse[]> {
+    return await db.select().from(quranVerses).where(
+      eq(quranVerses.arabicText, query) // يمكن تحسين البحث لاحقاً
+    );
+  }
+
+  async getPrayerTimes(city: string, date: string): Promise<PrayerTimes | undefined> {
+    const [result] = await db.select().from(prayerTimes).where(
+      eq(prayerTimes.city, city)
+    );
+    return result || undefined;
+  }
+
+  async createPrayerTimes(insertPrayerTimes: InsertPrayerTimes): Promise<PrayerTimes> {
+    const [result] = await db.insert(prayerTimes).values(insertPrayerTimes).returning();
+    return result;
+  }
+
+  async getIslamicEvents(): Promise<IslamicEvent[]> {
+    return await db.select().from(islamicEvents);
+  }
+
+  async getIslamicEventsByDate(date: string): Promise<IslamicEvent[]> {
+    return await db.select().from(islamicEvents).where(eq(islamicEvents.hijriDate, date));
+  }
+
+  async getIslamicEventsByCategory(category: string): Promise<IslamicEvent[]> {
+    return await db.select().from(islamicEvents).where(eq(islamicEvents.category, category));
+  }
+
+  async getUserSettings(userId: string): Promise<UserSettings | undefined> {
+    const [result] = await db.select().from(userSettings).where(eq(userSettings.userId, userId));
+    return result || undefined;
+  }
+
+  async createUserSettings(insertSettings: InsertUserSettings): Promise<UserSettings> {
+    const [result] = await db.insert(userSettings).values(insertSettings).returning();
+    return result;
+  }
+
+  async updateUserSettings(userId: string, updates: Partial<UserSettings>): Promise<UserSettings> {
+    const [result] = await db.update(userSettings)
+      .set(updates)
+      .where(eq(userSettings.userId, userId))
+      .returning();
+    return result;
+  }
+
+  async getTasbihSessions(userId: string): Promise<TasbihSession[]> {
+    return await db.select().from(tasbihSessions).where(eq(tasbihSessions.userId, userId));
+  }
+
+  async createTasbihSession(insertSession: InsertTasbihSession): Promise<TasbihSession> {
+    const [result] = await db.insert(tasbihSessions).values(insertSession).returning();
+    return result;
+  }
+
+  async updateTasbihSession(id: number, updates: Partial<TasbihSession>): Promise<TasbihSession> {
+    const [result] = await db.update(tasbihSessions)
+      .set(updates)
+      .where(eq(tasbihSessions.id, id))
+      .returning();
+    return result;
+  }
+}
+
+export const storage = new DatabaseStorage();
