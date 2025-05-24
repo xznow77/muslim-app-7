@@ -74,9 +74,71 @@ export function PrayerTimes() {
     setLoading(false);
   };
 
-  // جلب المواقيت عند تحميل الصفحة
+  // الحصول على الموقع الحالي للمستخدم
+  const getCurrentLocation = () => {
+    setLoading(true);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          try {
+            // جلب اسم المدينة من الإحداثيات
+            const locationResponse = await fetch(
+              `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=ar`
+            );
+            const locationData = await locationResponse.json();
+            setCity(locationData.city || locationData.locality || 'مدينة غير معروفة');
+            setCountry(locationData.countryName || 'دولة غير معروفة');
+            
+            // جلب مواقيت الصلاة باستخدام الإحداثيات
+            await fetchPrayerTimesByCoordinates(latitude, longitude);
+          } catch (error) {
+            console.error('خطأ في تحديد الموقع:', error);
+            fetchPrayerTimes();
+          }
+        },
+        (error) => {
+          console.error('خطأ في الحصول على الموقع:', error);
+          alert('يرجى السماح للتطبيق بالوصول إلى موقعك للحصول على مواقيت دقيقة');
+          setLoading(false);
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    } else {
+      alert('متصفحك لا يدعم تحديد الموقع');
+      setLoading(false);
+    }
+  };
+
+  // جلب مواقيت الصلاة بالإحداثيات
+  const fetchPrayerTimesByCoordinates = async (lat: number, lng: number) => {
+    try {
+      const response = await fetch(
+        `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lng}&method=4`
+      );
+      const data = await response.json();
+      
+      if (data.code === 200 && data.data && data.data.timings) {
+        const timings = data.data.timings;
+        setPrayerTimes([
+          { name: 'Fajr', time: timings.Fajr, arabicName: 'الفجر' },
+          { name: 'Sunrise', time: timings.Sunrise, arabicName: 'الشروق' },
+          { name: 'Dhuhr', time: timings.Dhuhr, arabicName: 'الظهر' },
+          { name: 'Asr', time: timings.Asr, arabicName: 'العصر' },
+          { name: 'Maghrib', time: timings.Maghrib, arabicName: 'المغرب' },
+          { name: 'Isha', time: timings.Isha, arabicName: 'العشاء' }
+        ]);
+      }
+    } catch (error) {
+      console.error('خطأ في جلب مواقيت الصلاة:', error);
+      fetchPrayerTimes();
+    }
+    setLoading(false);
+  };
+
+  // جلب المواقيت عند تحميل الصفحة - نطلب الموقع أولاً
   useEffect(() => {
-    fetchPrayerTimes();
+    getCurrentLocation();
   }, []);
 
   // تحديد الصلاة التالية

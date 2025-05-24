@@ -154,41 +154,74 @@ export function QiblaDirection() {
                 <p className="text-muted-foreground">وجه هاتفك نحو الاتجاه المحدد</p>
               </div>
 
-              {/* Compass Visual */}
-              <div className="relative w-80 h-80 mx-auto mb-8">
-                {/* Compass Circle */}
-                <div className="absolute inset-0 border-4 border-primary rounded-full">
+              {/* Enhanced Compass Visual */}
+              <div className="relative w-96 h-96 mx-auto mb-8 bg-gradient-to-br from-green-100 to-emerald-200 rounded-full shadow-2xl">
+                {/* Outer Ring */}
+                <div className="absolute inset-2 border-4 border-emerald-600 rounded-full bg-gradient-to-br from-white to-green-50">
+                  
                   {/* Direction Markers */}
-                  <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-sm font-bold">ش</div>
-                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-sm font-bold">ج</div>
-                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-sm font-bold">ق</div>
-                  <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-sm font-bold">غ</div>
+                  <div className="absolute top-4 left-1/2 transform -translate-x-1/2 text-lg font-bold text-emerald-800 bg-white px-2 py-1 rounded">شمال</div>
+                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-lg font-bold text-emerald-800 bg-white px-2 py-1 rounded">جنوب</div>
+                  <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-lg font-bold text-emerald-800 bg-white px-2 py-1 rounded">شرق</div>
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-lg font-bold text-emerald-800 bg-white px-2 py-1 rounded">غرب</div>
+
+                  {/* Degree Markers */}
+                  {Array.from({ length: 12 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="absolute w-1 h-6 bg-emerald-600"
+                      style={{
+                        top: '10px',
+                        left: '50%',
+                        transformOrigin: '50% 182px',
+                        transform: `translateX(-50%) rotate(${i * 30}deg)`
+                      }}
+                    />
+                  ))}
                 </div>
 
-                {/* Compass Needle */}
+                {/* Device Direction Needle (Red) */}
                 <div 
                   className="absolute inset-0 transition-transform duration-300"
                   style={{ transform: `rotate(${compassDirection}deg)` }}
                 >
-                  <div className="absolute top-1/2 left-1/2 w-1 h-32 bg-red-500 transform -translate-x-1/2 -translate-y-full origin-bottom">
-                    <div className="absolute top-0 left-1/2 w-0 h-0 border-l-2 border-r-2 border-b-4 border-transparent border-b-red-500 transform -translate-x-1/2"></div>
-                  </div>
-                </div>
-
-                {/* Qibla Direction Indicator */}
-                <div 
-                  className="absolute inset-0 transition-transform duration-500"
-                  style={{ transform: `rotate(${qiblaDirection}deg)` }}
-                >
-                  <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
-                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                      🕋
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    {/* Device Arrow */}
+                    <div className="relative">
+                      <div className="w-2 h-32 bg-red-600 rounded-full transform -translate-y-16 shadow-lg"></div>
+                      <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-8 border-transparent border-b-red-600"></div>
+                      <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 text-xs font-bold text-white bg-red-600 px-1 rounded">جهازك</div>
                     </div>
                   </div>
                 </div>
 
-                {/* Center Dot */}
-                <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-primary rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+                {/* Qibla Direction Arrow (Green) */}
+                <div 
+                  className="absolute inset-0 transition-transform duration-500"
+                  style={{ transform: `rotate(${qiblaDirection}deg)` }}
+                >
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    {/* Qibla Arrow */}
+                    <div className="relative">
+                      <div className="w-3 h-40 bg-green-600 rounded-full transform -translate-y-20 shadow-xl"></div>
+                      <div className="absolute -top-24 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-12 border-transparent border-b-green-600"></div>
+                      <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 text-2xl">🕋</div>
+                      <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 text-xs font-bold text-white bg-green-600 px-2 py-1 rounded whitespace-nowrap">اتجاه القبلة</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Center Circle */}
+                <div className="absolute top-1/2 left-1/2 w-8 h-8 bg-emerald-600 rounded-full transform -translate-x-1/2 -translate-y-1/2 shadow-lg border-2 border-white"></div>
+                
+                {/* Direction Difference Indicator */}
+                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center">
+                  <div className="bg-white/90 px-4 py-2 rounded-lg shadow-lg">
+                    <div className="text-sm text-emerald-800 font-semibold">
+                      انحراف: {Math.abs(relativeQiblaDirection).toFixed(1)}°
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="text-center space-y-4">
