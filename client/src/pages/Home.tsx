@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,10 +24,10 @@ export function Home() {
   });
 
   // تحديث الوقت كل ثانية
-  useState(() => {
+  useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
-  });
+  }, []);
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('ar-SA', { 
