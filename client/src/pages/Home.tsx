@@ -3,7 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Home as HomeIcon, BookOpen, Clock, Calendar, Compass, Play } from 'lucide-react';
+import { Home as HomeIcon, BookOpen, Clock, Calendar, Compass, Moon, Sun } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
 import { AdhkarCard } from '@/components/islamic/AdhkarCard';
 import { TasbihCounter } from '@/components/islamic/TasbihCounter';
 import { AsmaUlHusnaCard } from '@/components/islamic/AsmaUlHusnaCard';
@@ -11,6 +12,7 @@ import type { Adhkar, AsmaUlHusna } from '@shared/schema';
 
 export function Home() {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const { theme, toggleTheme } = useTheme();
 
   // جلب الأذكار
   const { data: adhkar, isLoading: adhkarLoading } = useQuery<Adhkar[]>({
@@ -180,19 +182,28 @@ export function Home() {
             <section className="bg-primary/5 rounded-lg p-6">
               <h3 className="text-lg font-bold text-primary mb-4 text-center">أدوات سريعة</h3>
               <div className="space-y-3">
-                <Button className="w-full justify-start gap-3" variant="outline">
-                  <Play className="w-4 h-4" />
-                  تلاوة القرآن
-                </Button>
+                <Link href="/quran" className="w-full">
+                  <Button className="w-full justify-start gap-3" variant="outline">
+                    <BookOpen className="w-4 h-4" />
+                    القرآن الكريم
+                  </Button>
+                </Link>
                 
-                <Button className="w-full justify-start gap-3" variant="outline">
-                  <Compass className="w-4 h-4" />
-                  المساجد القريبة
-                </Button>
+                <Link href="/adhkar" className="w-full">
+                  <Button className="w-full justify-start gap-3" variant="outline">
+                    <Clock className="w-4 h-4" />
+                    جميع الأذكار
+                  </Button>
+                </Link>
                 
-                <Button className="w-full justify-start gap-3" variant="outline">
-                  <BookOpen className="w-4 h-4" />
-                  دعاء اليوم
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={toggleTheme}
+                  className="w-full justify-start gap-3"
+                >
+                  {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  {theme === 'dark' ? 'الوضع الفاتح' : 'الوضع الداكن'}
                 </Button>
               </div>
             </section>
