@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Link } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Home as HomeIcon, BookOpen, Clock, Calendar, Compass, Play } from 'lucide-react';
@@ -67,41 +68,49 @@ export function Home() {
       {/* Navigation Cards */}
       <section className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="hover:shadow-xl transition-all cursor-pointer group hover:scale-105">
-            <CardContent className="p-8 text-center">
-              <Clock className="w-12 h-12 mx-auto mb-4 text-primary group-hover:text-primary/80" />
-              <h3 className="text-lg font-bold mb-2">مواقيت الصلاة</h3>
-              <p className="text-sm text-muted-foreground">الفجر: 05:30</p>
-              <p className="text-xs text-muted-foreground mt-1">بحسب موقعك</p>
-            </CardContent>
-          </Card>
+          <Link href="/prayer-times">
+            <Card className="hover:shadow-xl transition-all cursor-pointer group hover:scale-105">
+              <CardContent className="p-8 text-center">
+                <Clock className="w-12 h-12 mx-auto mb-4 text-primary group-hover:text-primary/80" />
+                <h3 className="text-lg font-bold mb-2">مواقيت الصلاة</h3>
+                <p className="text-sm text-muted-foreground">الفجر: 05:30</p>
+                <p className="text-xs text-muted-foreground mt-1">بحسب موقعك</p>
+              </CardContent>
+            </Card>
+          </Link>
           
-          <Card className="hover:shadow-xl transition-all cursor-pointer group hover:scale-105">
-            <CardContent className="p-8 text-center">
-              <Compass className="w-12 h-12 mx-auto mb-4 text-primary group-hover:text-primary/80" />
-              <h3 className="text-lg font-bold mb-2">اتجاه القبلة</h3>
-              <p className="text-sm text-muted-foreground">شمال شرق</p>
-              <p className="text-xs text-muted-foreground mt-1">بوصلة دقيقة</p>
-            </CardContent>
-          </Card>
+          <Link href="/qibla">
+            <Card className="hover:shadow-xl transition-all cursor-pointer group hover:scale-105">
+              <CardContent className="p-8 text-center">
+                <Compass className="w-12 h-12 mx-auto mb-4 text-primary group-hover:text-primary/80" />
+                <h3 className="text-lg font-bold mb-2">اتجاه القبلة</h3>
+                <p className="text-sm text-muted-foreground">شمال شرق</p>
+                <p className="text-xs text-muted-foreground mt-1">بوصلة دقيقة</p>
+              </CardContent>
+            </Card>
+          </Link>
           
-          <Card className="hover:shadow-xl transition-all cursor-pointer group hover:scale-105">
-            <CardContent className="p-8 text-center">
-              <BookOpen className="w-12 h-12 mx-auto mb-4 text-primary group-hover:text-primary/80" />
-              <h3 className="text-lg font-bold mb-2">القرآن الكريم</h3>
-              <p className="text-sm text-muted-foreground">114 سورة</p>
-              <p className="text-xs text-muted-foreground mt-1">مع التلاوة</p>
-            </CardContent>
-          </Card>
+          <Link href="/quran">
+            <Card className="hover:shadow-xl transition-all cursor-pointer group hover:scale-105">
+              <CardContent className="p-8 text-center">
+                <BookOpen className="w-12 h-12 mx-auto mb-4 text-primary group-hover:text-primary/80" />
+                <h3 className="text-lg font-bold mb-2">القرآن الكريم</h3>
+                <p className="text-sm text-muted-foreground">114 سورة</p>
+                <p className="text-xs text-muted-foreground mt-1">مع التلاوة</p>
+              </CardContent>
+            </Card>
+          </Link>
           
-          <Card className="hover:shadow-xl transition-all cursor-pointer group hover:scale-105">
-            <CardContent className="p-8 text-center">
-              <Calendar className="w-12 h-12 mx-auto mb-4 text-primary group-hover:text-primary/80" />
-              <h3 className="text-lg font-bold mb-2">التقويم الهجري</h3>
-              <p className="text-sm text-muted-foreground">1446 هـ</p>
-              <p className="text-xs text-muted-foreground mt-1">أحداث إسلامية</p>
-            </CardContent>
-          </Card>
+          <Link href="/calendar">
+            <Card className="hover:shadow-xl transition-all cursor-pointer group hover:scale-105">
+              <CardContent className="p-8 text-center">
+                <Calendar className="w-12 h-12 mx-auto mb-4 text-primary group-hover:text-primary/80" />
+                <h3 className="text-lg font-bold mb-2">التقويم الهجري</h3>
+                <p className="text-sm text-muted-foreground">1446 هـ</p>
+                <p className="text-xs text-muted-foreground mt-1">أحداث إسلامية</p>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       </section>
 
@@ -114,7 +123,9 @@ export function Home() {
             <section>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-primary">أذكار الصباح</h2>
-                <Button variant="outline">عرض الكل</Button>
+                <Link href="/adhkar">
+                  <Button variant="outline">عرض الكل</Button>
+                </Link>
               </div>
               
               {adhkarLoading ? (
