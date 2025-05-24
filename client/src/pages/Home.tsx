@@ -66,134 +66,127 @@ export function Home() {
 
       {/* Navigation Cards */}
       <section className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card className="hover:shadow-lg transition-all cursor-pointer">
-            <CardContent className="p-6 text-center">
-              <Clock className="w-8 h-8 mx-auto mb-3 text-primary" />
-              <h3 className="font-semibold mb-1">مواقيت الصلاة</h3>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="hover:shadow-xl transition-all cursor-pointer group hover:scale-105">
+            <CardContent className="p-8 text-center">
+              <Clock className="w-12 h-12 mx-auto mb-4 text-primary group-hover:text-primary/80" />
+              <h3 className="text-lg font-bold mb-2">مواقيت الصلاة</h3>
               <p className="text-sm text-muted-foreground">الفجر: 05:30</p>
+              <p className="text-xs text-muted-foreground mt-1">بحسب موقعك</p>
             </CardContent>
           </Card>
           
-          <Card className="hover:shadow-lg transition-all cursor-pointer">
-            <CardContent className="p-6 text-center">
-              <Compass className="w-8 h-8 mx-auto mb-3 text-primary" />
-              <h3 className="font-semibold mb-1">اتجاه القبلة</h3>
+          <Card className="hover:shadow-xl transition-all cursor-pointer group hover:scale-105">
+            <CardContent className="p-8 text-center">
+              <Compass className="w-12 h-12 mx-auto mb-4 text-primary group-hover:text-primary/80" />
+              <h3 className="text-lg font-bold mb-2">اتجاه القبلة</h3>
               <p className="text-sm text-muted-foreground">شمال شرق</p>
+              <p className="text-xs text-muted-foreground mt-1">بوصلة دقيقة</p>
             </CardContent>
           </Card>
           
-          <Card className="hover:shadow-lg transition-all cursor-pointer">
-            <CardContent className="p-6 text-center">
-              <BookOpen className="w-8 h-8 mx-auto mb-3 text-primary" />
-              <h3 className="font-semibold mb-1">القرآن الكريم</h3>
+          <Card className="hover:shadow-xl transition-all cursor-pointer group hover:scale-105">
+            <CardContent className="p-8 text-center">
+              <BookOpen className="w-12 h-12 mx-auto mb-4 text-primary group-hover:text-primary/80" />
+              <h3 className="text-lg font-bold mb-2">القرآن الكريم</h3>
               <p className="text-sm text-muted-foreground">114 سورة</p>
+              <p className="text-xs text-muted-foreground mt-1">مع التلاوة</p>
             </CardContent>
           </Card>
           
-          <Card className="hover:shadow-lg transition-all cursor-pointer">
-            <CardContent className="p-6 text-center">
-              <Calendar className="w-8 h-8 mx-auto mb-3 text-primary" />
-              <h3 className="font-semibold mb-1">التقويم الهجري</h3>
+          <Card className="hover:shadow-xl transition-all cursor-pointer group hover:scale-105">
+            <CardContent className="p-8 text-center">
+              <Calendar className="w-12 h-12 mx-auto mb-4 text-primary group-hover:text-primary/80" />
+              <h3 className="text-lg font-bold mb-2">التقويم الهجري</h3>
               <p className="text-sm text-muted-foreground">1446 هـ</p>
+              <p className="text-xs text-muted-foreground mt-1">أحداث إسلامية</p>
             </CardContent>
           </Card>
         </div>
       </section>
 
-      <main className="max-w-7xl mx-auto px-4 space-y-12">
-        {/* Adhkar Section */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-primary">أذكار الصباح</h2>
-            <Button variant="outline">عرض الكل</Button>
-          </div>
+      <main className="max-w-7xl mx-auto px-4">
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           
-          {adhkarLoading ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {Array.from({ length: 2 }).map((_, i) => (
-                <Card key={i} className="h-64 animate-pulse bg-muted" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {adhkar?.slice(0, 2).map((dhikr) => (
-                <AdhkarCard key={dhikr.id} adhkar={dhikr} />
-              ))}
-            </div>
-          )}
-        </section>
+          {/* Right Column - Adhkar */}
+          <div className="lg:col-span-2 space-y-8">
+            <section>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-primary">أذكار الصباح</h2>
+                <Button variant="outline">عرض الكل</Button>
+              </div>
+              
+              {adhkarLoading ? (
+                <div className="space-y-4">
+                  {Array.from({ length: 2 }).map((_, i) => (
+                    <Card key={i} className="h-48 animate-pulse bg-muted" />
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {adhkar?.slice(0, 2).map((dhikr) => (
+                    <AdhkarCard key={dhikr.id} adhkar={dhikr} />
+                  ))}
+                </div>
+              )}
+            </section>
 
-        {/* Tasbih Section */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-primary">المسبحة الإلكترونية</h2>
+            {/* Asma ul Husna Section */}
+            <section>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-primary">أسماء الله الحسنى</h2>
+                <Button variant="outline">عرض الكل</Button>
+              </div>
+              
+              {asmaLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <Card key={i} className="h-32 animate-pulse bg-muted" />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {asmaUlHusna?.slice(0, 4).map((asma) => (
+                    <AsmaUlHusnaCard key={asma.id} asma={asma} />
+                  ))}
+                </div>
+              )}
+            </section>
           </div>
-          <div className="max-w-md mx-auto">
-            <TasbihCounter />
-          </div>
-        </section>
 
-        {/* Asma ul Husna Section */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-primary">أسماء الله الحسنى</h2>
-            <Button variant="outline">عرض الكل</Button>
-          </div>
-          
-          {asmaLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Card key={i} className="h-64 animate-pulse bg-muted" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {asmaUlHusna?.slice(0, 3).map((asma) => (
-                <AsmaUlHusnaCard key={asma.id} asma={asma} />
-              ))}
-            </div>
-          )}
-        </section>
+          {/* Left Column - Tasbih & Quick Actions */}
+          <div className="space-y-8">
+            {/* Tasbih Section */}
+            <section>
+              <div className="flex items-center justify-center mb-6">
+                <h2 className="text-xl font-bold text-primary">المسبحة الإلكترونية</h2>
+              </div>
+              <TasbihCounter />
+            </section>
 
-        {/* Quick Actions */}
-        <section className="bg-primary/5 rounded-lg p-8">
-          <h2 className="text-2xl font-bold text-primary mb-6 text-center">أدوات سريعة</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="text-center hover:shadow-lg transition-all">
-              <CardContent className="p-6">
-                <Play className="w-12 h-12 mx-auto mb-4 text-primary" />
-                <h3 className="font-semibold mb-2">تلاوة القرآن</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  استمع لتلاوة عذبة للقرآن الكريم
-                </p>
-                <Button className="w-full">ابدأ الاستماع</Button>
-              </CardContent>
-            </Card>
-            
-            <Card className="text-center hover:shadow-lg transition-all">
-              <CardContent className="p-6">
-                <Compass className="w-12 h-12 mx-auto mb-4 text-primary" />
-                <h3 className="font-semibold mb-2">المساجد القريبة</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  اعثر على أقرب المساجد إليك
-                </p>
-                <Button className="w-full">البحث</Button>
-              </CardContent>
-            </Card>
-            
-            <Card className="text-center hover:shadow-lg transition-all">
-              <CardContent className="p-6">
-                <BookOpen className="w-12 h-12 mx-auto mb-4 text-primary" />
-                <h3 className="font-semibold mb-2">دعاء اليوم</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  دعاء مختار لكل يوم من أيام الأسبوع
-                </p>
-                <Button className="w-full">اقرأ الدعاء</Button>
-              </CardContent>
-            </Card>
+            {/* Quick Actions - Compact */}
+            <section className="bg-primary/5 rounded-lg p-6">
+              <h3 className="text-lg font-bold text-primary mb-4 text-center">أدوات سريعة</h3>
+              <div className="space-y-3">
+                <Button className="w-full justify-start gap-3" variant="outline">
+                  <Play className="w-4 h-4" />
+                  تلاوة القرآن
+                </Button>
+                
+                <Button className="w-full justify-start gap-3" variant="outline">
+                  <Compass className="w-4 h-4" />
+                  المساجد القريبة
+                </Button>
+                
+                <Button className="w-full justify-start gap-3" variant="outline">
+                  <BookOpen className="w-4 h-4" />
+                  دعاء اليوم
+                </Button>
+              </div>
+            </section>
           </div>
-        </section>
+        </div>
       </main>
 
       {/* Footer */}
