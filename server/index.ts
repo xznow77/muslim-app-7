@@ -1,17 +1,65 @@
-✅ الآن ماذا تفعل؟
-استبدل الكود القديم بهذا الكود في ملف main.ts أو الملف الرئيسي للسيرفر.
+import express, { type Request, Response, NextFunction } from "express";
+import { registerRoutes } from "./routes";
+import { setupVite, serveStatic, log } from "./vite";
 
-شغّل الأوامر التالية في الطرفية لدفع التعديلات إلى GitHub:
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-bash
-Copy
-Edit
-git add .
-git commit -m "fix: use dynamic port for Railway"
-git push
-افتح مشروعك في Railway، وانتظر إعادة النشر (ستتم تلقائيًا).
+app.use((req, res, next) => {
+  const start = Date.now();
+  const path = req.path;
+  let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
-بعد انتهاء النشر بنجاح، في صفحة الخدمة، اضغط على "Generate Domain" تحت قسم "Public Networking" للحصول على رابط موقعك.
+  const originalResJson = res.json;
+  res.json = function (bodyJson, ...args) {
+    capturedJsonResponse = bodyJson;
+    return originalResJson.apply(res, [bodyJson, ...args]);
+  };
 
-انسخ الرابط وجربه في المتصفح 🌐
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    if (path.startsWith("/api")) {
+      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
+      if (capturedJsonResponse) {
+        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      }
 
+      if (logLine.length > 80) {
+        logLine = logLine.slice(0, 79) + "…";
+      }
+
+      log(logLine);
+    }
+  });
+
+  next();
+});
+
+(async () => {
+  const server = await registerRoutes(app);
+
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+
+    res.status(status).json({ message });
+    throw err;
+  });
+
+  if (app.get("env") === "development") {
+    await setupVite(app, server);
+  } else {
+    serveStatic(app);
+  }
+
+  // ✅ تم تعديل هذا الجزء لاستخدام المنفذ الديناميكي من Railway
+  const port = process.env.PORT ? Number(process.env.PORT) : 5000;
+  server.listen({
+    port,
+    host: "0.0.0.0",
+    reusePort: true,
+  }, () => {
+    log(`serving on port ${port}`);
+  });
+})();
